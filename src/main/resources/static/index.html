@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Görev Yönetim Sistemi</title>
+    <style>
+        /* Sayfanın genel görünümü */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        /* Ortadaki ana alan */
+        .sayfa {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Başlık ile kartlar arasına boşluk bırakıyor */
+        .ust-alan {
+            margin-bottom: 24px;
+        }
+
+        .ust-alan h1 {
+            margin: 0 0 8px 0;
+        }
+
+        /* Her bölüm kart gibi dursun diye */
+        .kart {
+            background: #ffffff;
+            border: 1px solid #d7dde4;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        /* Inputları yan yana dizmek için */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        input,
+        select,
+        button,
+        textarea {
+            font: inherit;
+        }
+
+        /* Input ve select görünümü */
+        input,
+        select {
+            padding: 10px;
+            border: 1px solid #c4cbd4;
+            border-radius: 8px;
+            background: white;
+        }
+
+        /* Açıklama alanı */
+        textarea {
+            padding: 10px;
+            border: 1px solid #c4cbd4;
+            border-radius: 8px;
+            background: white;
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        /* Buton görünümü */
+        button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            background: #1463ff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0f4fcc;
+        }
+
+        /* Butonları yan yana koymak için */
+        .buton-grup {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        /* Liste alanı */
+        .liste-alani {
+            background: #f8fafc;
+            border: 1px dashed #c4cbd4;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 40px;
+        }
+
+        /* Projeleri satır satır göstermek için */
+        .satir-kutu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .satir-kutu:last-child {
+            margin-bottom: 0;
+        }
+
+        .kucuk-buton {
+            padding: 8px 10px;
+        }
+
+        /* Kısa bilgi yazıları */
+        .bilgi-yazi {
+            margin: 0;
+            color: #475569;
+        }
+
+        /* Her bölümün altındaki sonuç kutusu */
+        .sonuc-alani {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 14px;
+            border-radius: 8px;
+            overflow: auto;
+            min-height: 24px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="sayfa">
+    <!-- Sayfa başlığı -->
+    <header class="ust-alan">
+        <h1>Görev Yönetim Sistemi</h1>
+    </header>
+
+    <section class="kart">
+        <h2>1. Kayıt Ol</h2>
+        <p>Yeni kullanıcı ekleyebilirsin.</p>
+        <div class="grid">
+            <input id="kayitAd" type="text" placeholder="Ad">
+            <input id="kayitEmail" type="email" placeholder="E-posta">
+            <input id="kayitSifre" type="password" placeholder="Şifre">
+        </div>
+        <button id="kayitButon">Kayıt Ol</button>
+        <div id="kayitSonucAlani" class="sonuc-alani"></div>
+    </section>
+
+    <section class="kart">
+        <h2>2. Giriş Yap</h2>
+        <p>Giriş yaptıktan sonra proje ve görev işlemlerini kullanabilirsin.</p>
+        <div class="grid">
+            <input id="girisEmail" type="email" placeholder="E-posta">
+            <input id="girisSifre" type="password" placeholder="Şifre">
+        </div>
+        <div class="buton-grup">
+            <button id="oturumKaydetButon">Giriş Yap</button>
+        </div>
+        <p id="aktifKullaniciYazi" class="bilgi-yazi">Aktif kullanıcı seçilmedi.</p>
+        <div id="girisSonucAlani" class="sonuc-alani"></div>
+    </section>
+
+    <section class="kart">
+        <h2>3. Projeler</h2>
+        <div class="grid">
+            <input id="projeAd" type="text" placeholder="Proje adı">
+            <input id="projeAciklama" type="text" placeholder="Proje açıklaması">
+        </div>
+        <div class="buton-grup">
+            <button id="projeOlusturButon">Proje Oluştur</button>
+            <button id="projeleriGetirButon">Projeleri Göster</button>
+        </div>
+        <p id="aktifProjeYazi" class="bilgi-yazi">Seçili proje yok.</p>
+        <div id="projelerAlani" class="liste-alani"></div>
+        <div id="projeSonucAlani" class="sonuc-alani"></div>
+    </section>
+
+    <section class="kart">
+        <h2>4. Görev Ekle</h2>
+        <p id="gorevAktifProjeYazi" class="bilgi-yazi">Önce bir proje seç.</p>
+        <div class="grid">
+            <input id="gorevBaslik" type="text" placeholder="Görev başlığı">
+            <select id="gorevDurum">
+                <option value="TODO">Yapılacak</option>
+                <option value="IN_PROGRESS">Devam Ediyor</option>
+                <option value="DONE">Tamamlandı</option>
+            </select>
+            <select id="gorevOncelik">
+                <option value="LOW">Düşük</option>
+                <option value="MEDIUM">Orta</option>
+                <option value="HIGH">Yüksek</option>
+            </select>
+            <input id="gorevSonTarih" type="date">
+        </div>
+        <div class="grid">
+            <textarea id="gorevAciklama" placeholder="Görev açıklaması"></textarea>
+        </div>
+        <div class="buton-grup">
+            <button id="gorevOlusturButon">Görev Oluştur</button>
+        </div>
+        <div id="gorevSonucAlani" class="sonuc-alani"></div>
+    </section>
+
+    <section class="kart">
+        <h2>5. Görevler</h2>
+        <p>İstersen durum seçip görevleri listeleyebilirsin.</p>
+        <div class="grid">
+            <select id="filtreDurum">
+                <option value="">Durum seç</option>
+                <option value="TODO">Yapılacak</option>
+                <option value="IN_PROGRESS">Devam Ediyor</option>
+                <option value="DONE">Tamamlandı</option>
+            </select>
+        </div>
+        <button id="filtreliGorevButon">Görevleri Getir</button>
+        <div id="gorevlerAlani" class="liste-alani"></div>
+        <div id="filtreSonucAlani" class="sonuc-alani"></div>
+    </section>
+</div>
+
+<script>
+    // Sonuç yazıları için alanları aldım
+    const kayitSonucAlani = document.getElementById("kayitSonucAlani");
+    const girisSonucAlani = document.getElementById("girisSonucAlani");
+    const projeSonucAlani = document.getElementById("projeSonucAlani");
+    const gorevSonucAlani = document.getElementById("gorevSonucAlani");
+    const filtreSonucAlani = document.getElementById("filtreSonucAlani");
+    const aktifKullaniciYazi = document.getElementById("aktifKullaniciYazi");
+    const aktifProjeYazi = document.getElementById("aktifProjeYazi");
+    const gorevAktifProjeYazi = document.getElementById("gorevAktifProjeYazi");
+    const projelerAlani = document.getElementById("projelerAlani");
+    const gorevlerAlani = document.getElementById("gorevlerAlani");
+
+    // Durumları ekranda Türkçe göstermek için
+    const durumYazilari = {
+        TODO: "Yapılacak",
+        IN_PROGRESS: "Devam Ediyor",
+        DONE: "Tamamlandı"
+    };
+
+    // Öncelikleri ekranda Türkçe göstermek için
+    const oncelikYazilari = {
+        LOW: "Düşük",
+        MEDIUM: "Orta",
+        HIGH: "Yüksek"
+    };
+
+    // Giriş yapan kullanıcı bilgisini burada tutuyorum
+    const oturumBilgisi = {
+        email: "",
+        sifre: ""
+    };
+
+    // Seçilen projeyi burada tutuyorum
+    const aktifProjeBilgisi = {
+        id: null,
+        ad: ""
+    };
+
+    // İlgili kutuya mesaj yazmak için
+    function sonucuYaz(alan, mesaj) {
+        alan.textContent = mesaj;
+    }
+
+    // Hata nesnesini okunur mesaja çevirmek için
+    function hataMesajiniHazirla(hata) {
+        if (!hata) {
+            return "Beklenmeyen bir hata oluştu.";
+        }
+
+        if (typeof hata === "string") {
+            return hata;
+        }
+
+        if (hata.mesaj) {
+            return hata.mesaj;
+        }
+
+        const tumDegerler = Object.values(hata);
+
+        if (tumDegerler.length > 0) {
+            return tumDegerler.join("\n");
+        }
+
+        return "İşlem sırasında bir hata oluştu.";
+    }
+
+    // Hata yazdırmak için kısa yardımcı fonksiyon
+    function hatayiYaz(alan, hata) {
+        sonucuYaz(alan, hataMesajiniHazirla(hata));
+    }
+
+    // Proje seçilince hem proje bölümünde hem görev bölümünde gösteriyorum
+    function aktifProjeyiAyarla(proje) {
+        aktifProjeBilgisi.id = proje.id;
+        aktifProjeBilgisi.ad = proje.ad;
+        aktifProjeYazi.textContent = `Seçili proje: ${proje.ad}`;
+        gorevAktifProjeYazi.textContent = `Seçili proje: ${proje.ad}`;
+    }
+
+    // Projeleri ekranda listelemek için
+    function projeListesiniYaz(projeler) {
+        if (projeler.length === 0) {
+            projelerAlani.innerHTML = "Henüz proje yok.";
+            return;
+        }
+
+        projelerAlani.innerHTML = projeler.map(proje => `
+            <div class="satir-kutu">
+                <div><strong>${proje.id}</strong> - ${proje.ad}</div>
+                <button class="kucuk-buton" type="button" onclick="projeyiSec(${proje.id}, '${proje.ad.replace(/'/g, "\\'")}')">Seç</button>
+            </div>
+        `).join("");
+    }
+
+    // Basic Auth için header hazırlıyorum
+    function authHeaderOlustur() {
+        if (!oturumBilgisi.email || !oturumBilgisi.sifre) {
+            return {};
+        }
+
+        const token = btoa(`${oturumBilgisi.email}:${oturumBilgisi.sifre}`);
+
+        return {
+            Authorization: `Basic ${token}`
+        };
+    }
+
+    // Bütün fetch işlemlerini tek yerde topladım
+    async function istekAt(url, secenekler = {}, authGerekliMi = false) {
+        if (authGerekliMi && (!oturumBilgisi.email || !oturumBilgisi.sifre)) {
+            throw { mesaj: "Önce giriş bilgilerini kaydedin." };
+        }
+
+        const varsayilanHeader = {
+            "Content-Type": "application/json"
+        };
+
+        const authHeader = authGerekliMi ? authHeaderOlustur() : {};
+
+        const response = await fetch(url, {
+            ...secenekler,
+            headers: {
+                ...varsayilanHeader,
+                ...authHeader,
+                ...(secenekler.headers || {})
+            }
+        });
+
+        const yazi = await response.text();
+        const veri = yazi ? JSON.parse(yazi) : {};
+
+        if (!response.ok) {
+            throw veri;
+        }
+
+        return veri;
+    }
+
+    // Kayıt olma işlemi
+    document.getElementById("kayitButon").addEventListener("click", async () => {
+        const veri = {
+            ad: document.getElementById("kayitAd").value,
+            email: document.getElementById("kayitEmail").value,
+            sifre: document.getElementById("kayitSifre").value
+        };
+
+        try {
+            await istekAt("/auth/register", {
+                method: "POST",
+                body: JSON.stringify(veri)
+            });
+            sonucuYaz(kayitSonucAlani, "Kayıt işlemi başarılı.");
+        } catch (hata) {
+            hatayiYaz(kayitSonucAlani, hata);
+        }
+    });
+
+    // Giriş yapınca kullanıcı bilgisini de kaydediyorum
+    document.getElementById("oturumKaydetButon").addEventListener("click", async () => {
+        const veri = {
+            email: document.getElementById("girisEmail").value,
+            sifre: document.getElementById("girisSifre").value
+        };
+
+        try {
+            await istekAt("/auth/login", {
+                method: "POST",
+                body: JSON.stringify(veri)
+            });
+            oturumBilgisi.email = document.getElementById("girisEmail").value;
+            oturumBilgisi.sifre = document.getElementById("girisSifre").value;
+            aktifKullaniciYazi.textContent = `Aktif kullanıcı: ${oturumBilgisi.email}`;
+            sonucuYaz(girisSonucAlani, "Giriş başarılı.");
+        } catch (hata) {
+            hatayiYaz(girisSonucAlani, hata);
+        }
+    });
+
+    // Yeni proje ekleme
+    document.getElementById("projeOlusturButon").addEventListener("click", async () => {
+        const veri = {
+            ad: document.getElementById("projeAd").value,
+            aciklama: document.getElementById("projeAciklama").value
+        };
+
+        try {
+            const sonuc = await istekAt("/projeler", {
+                method: "POST",
+                body: JSON.stringify(veri)
+            }, true);
+            aktifProjeyiAyarla(sonuc);
+            sonucuYaz(projeSonucAlani, `Proje oluşturuldu.`);
+        } catch (hata) {
+            hatayiYaz(projeSonucAlani, hata);
+        }
+    });
+
+    // Kayıtlı projeleri getirme
+    document.getElementById("projeleriGetirButon").addEventListener("click", async () => {
+        try {
+            const sonuc = await istekAt("/projeler", {
+                method: "GET"
+            }, true);
+
+            projeListesiniYaz(sonuc);
+
+            sonucuYaz(projeSonucAlani, `Listeden bir proje seçebilirsin.`);
+        } catch (hata) {
+            hatayiYaz(projeSonucAlani, hata);
+        }
+    });
+
+    // Yeni görev ekleme
+    document.getElementById("gorevOlusturButon").addEventListener("click", async () => {
+        if (!aktifProjeBilgisi.id) {
+            sonucuYaz(gorevSonucAlani, "Önce bir proje seç.");
+            return;
+        }
+
+        const veri = {
+            baslik: document.getElementById("gorevBaslik").value,
+            aciklama: document.getElementById("gorevAciklama").value,
+            durum: document.getElementById("gorevDurum").value,
+            oncelik: document.getElementById("gorevOncelik").value,
+            sonTarih: document.getElementById("gorevSonTarih").value,
+            proje: {
+                id: aktifProjeBilgisi.id
+            }
+        };
+
+        try {
+            const sonuc = await istekAt("/tasks", {
+                method: "POST",
+                body: JSON.stringify(veri)
+            }, true);
+
+            // Başarılıysa formu temizliyorum
+            document.getElementById("gorevBaslik").value = "";
+            document.getElementById("gorevAciklama").value = "";
+            document.getElementById("gorevDurum").value = "TODO";
+            document.getElementById("gorevOncelik").value = "LOW";
+            document.getElementById("gorevSonTarih").value = "";
+
+            sonucuYaz(gorevSonucAlani, `Görev oluşturuldu.`);
+        } catch (hata) {
+            hatayiYaz(gorevSonucAlani, hata);
+        }
+    });
+
+    // Görevleri seçilen filtreye göre getiriyor
+    async function gorevleriGetir() {
+        const durum = document.getElementById("filtreDurum").value;
+
+        const params = new URLSearchParams();
+
+        if (durum) params.append("durum", durum);
+
+        try {
+            const sonuc = await istekAt(`/tasks?${params.toString()}`, {
+                method: "GET"
+            }, true);
+
+            const icerik = sonuc.content || [];
+
+            // Gelen görevleri ekrana yazdırıyorum
+            gorevlerAlani.innerHTML = icerik.map(gorev =>
+                `<div><strong>${gorev.id}</strong> - ${gorev.baslik} - ${gorev.proje ? gorev.proje.ad : "Proje yok"} - ${durumYazilari[gorev.durum] || gorev.durum} - ${oncelikYazilari[gorev.oncelik] || gorev.oncelik}</div>`
+            ).join("");
+
+            // Hiç görev yoksa bunu gösteriyorum
+            if (icerik.length === 0) {
+                gorevlerAlani.innerHTML = "Liste boş.";
+            }
+
+            sonucuYaz(filtreSonucAlani, `${icerik.length} görev bulundu.`);
+        } catch (hata) {
+            hatayiYaz(filtreSonucAlani, hata);
+        }
+    }
+
+    // Butona basınca görevleri getir
+    document.getElementById("filtreliGorevButon").addEventListener("click", gorevleriGetir);
+
+    // Proje listesindeki seç butonu burayı çağırıyor
+    window.projeyiSec = function (id, ad) {
+        aktifProjeyiAyarla({ id, ad });
+        sonucuYaz(projeSonucAlani, `Seçili proje: ${ad}`);
+    };
+
+    // Sayfa ilk açılınca görünen küçük bilgiler
+    sonucuYaz(kayitSonucAlani, "Formu doldurup kayıt ol.");
+    sonucuYaz(girisSonucAlani, "E-posta ve şifreyi yazıp giriş yap.");
+    sonucuYaz(projeSonucAlani, "Proje oluşturabilir veya seçebilirsin.");
+    sonucuYaz(gorevSonucAlani, "Görev eklemek için önce proje seç.");
+    sonucuYaz(filtreSonucAlani, "Durum seçip görevleri görebilirsin.");
+</script>
+</body>
+</html>
